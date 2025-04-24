@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import Search from './components/Search'
 import MovieCard from './components/MovieCard';
+import { useDebounce } from 'react-use';
 
 const API_BASE_URL = 'https://api.themoviedb.org/3';
 
@@ -20,6 +21,10 @@ const App = () => {
   const [errorMessage, setErrorMessage] = useState('');
   const [movieList, setMovieList] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
+
+// this make the search access many api request by delaying the user input by 500ms
+  useDebounce(() => setDebouncedSearchTerm(searchTerm), 500, [searchTerm])
 
 
   const fetchMovies = async (query = '') => {
@@ -56,8 +61,8 @@ const App = () => {
   }
 
   useEffect(() => {
-    fetchMovies(searchTerm);
-  }, [searchTerm]);
+    fetchMovies(debouncedSearchTerm);
+  }, [debouncedSearchTerm]);
   
 
   return (
